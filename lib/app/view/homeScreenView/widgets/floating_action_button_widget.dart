@@ -1,7 +1,10 @@
 import 'package:box_keeper_app/app/res/app_text_styles.dart';
+import 'package:box_keeper_app/app/view/addNewBoxScreenView/addNewBoxScreenView.dart';
 import 'package:flutter/material.dart';
 
-Widget floatingActionButtonWidget(){
+Widget floatingActionButtonWidget({
+  required BuildContext context
+}){
   return Container(
         height: 62,
         decoration: BoxDecoration(
@@ -18,7 +21,9 @@ Widget floatingActionButtonWidget(){
           ],
         ),
         child: FloatingActionButton.extended(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddNewBoxScreenView(),));
+          },
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           elevation: 0,

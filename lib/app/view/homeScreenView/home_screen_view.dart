@@ -21,7 +21,7 @@ class _HomeScreenViewState extends State<HomeScreenView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarWidget(),
-      floatingActionButton: floatingActionButtonWidget(),
+      floatingActionButton: floatingActionButtonWidget(context: context),
       body: _body(),
     );
   }
