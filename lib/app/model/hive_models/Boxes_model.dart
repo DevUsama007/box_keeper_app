@@ -1,15 +1,16 @@
 import 'package:hive/hive.dart';
 
 part 'Boxes_model.g.dart';
+
 @HiveType(typeId: 1)
-class BoxesModel {
+class BoxesModel extends HiveObject {
   @HiveField(0)
   String uniqueID;
   @HiveField(1)
   String qrCodePath;
   @HiveField(2)
   String boxTitle;
-  @HiveField(3) 
+  @HiveField(3)
   String boxLocation;
   @HiveField(4)
   String boxCreationDate;
