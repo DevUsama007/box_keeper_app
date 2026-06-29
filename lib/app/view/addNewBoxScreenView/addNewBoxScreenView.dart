@@ -2,10 +2,15 @@ import 'package:box_keeper_app/app/custom_widgets/icon_button_widget.dart';
 import 'package:box_keeper_app/app/res/app_assets.dart';
 import 'package:box_keeper_app/app/res/app_colors.dart';
 import 'package:box_keeper_app/app/res/app_text_styles.dart';
+import 'package:box_keeper_app/app/utils/boxes.dart';
+import 'package:box_keeper_app/app/utils/custome_snackbar_util.dart';
 import 'package:box_keeper_app/app/view/addNewBoxScreenView/Widgets/addBoxTextFieldWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_action_widget.dart';
+import 'package:box_keeper_app/app/view_model/addNewBoxViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/src/simple/list_notifier.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class AddNewBoxScreenView extends StatefulWidget {
   const AddNewBoxScreenView({super.key});
@@ -18,20 +23,18 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
   TextEditingController boxNameController = TextEditingController();
   TextEditingController boxLocationController = TextEditingController();
   TextEditingController itemController = TextEditingController();
-  List<String> itemsList = [
-    'Books',
-    'Pensile Box',
-    'Dairy',
-    'Mobile Charger',
-    'Laptop Charger',
-    'Keyboard',
-    'Books',
-    'Pensile Box',
-    'Dairy',
-    'Mobile Charger',
-    'Laptop Charger',
-    'Keyboard',
-  ];
+  AddNewBoxViewModel _addNewBoxViewModel = Get.put(AddNewBoxViewModel());
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _addNewBoxViewModel.boxitemList.clear();
+    boxNameController.dispose();
+    boxLocationController.dispose();
+    itemController.dispose();
+    _addNewBoxViewModel.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,100 +107,102 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text('📋 Items'),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Color(0xff5B5CEB),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            "12",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        // RichText(
-                        //   text: TextSpan(
-                        //     children: [
-                        //       TextSpan(
-                        //         text: '${itemsList.length} ',
-                        //         style: AppTextStyles.customText(fontSize: 12),
-                        //       ),
-
-                        //       TextSpan(
-                        //         text: 'added',
-                        //         style: AppTextStyles.customText(
-                        //           fontSize: 13,
-                        //           color: Colors.grey,
-                        //         ),
-                        //       ),
-                        //     ],
-
-                        //     style: AppTextStyles.customText(),
-                        //   ),
-                        // ),
+                        Obx(() {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color(0xff5B5CEB),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text(
+                              _addNewBoxViewModel.boxitemList.length.toString(),
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }),
                       ],
                     ).paddingOnly(left: 10, right: 10, top: 10, bottom: 5),
                     Divider(
                       color: Colors.grey,
                     ).paddingSymmetric(horizontal: 20),
                     SizedBox(height: 10),
-                    Column(
-                      children: List.generate(itemsList.length, (index) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          margin: const EdgeInsets.only(
-                            bottom: 10,
-                            left: 5,
-                            right: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text("#${index + 1}").paddingOnly(right: 10),
-                                  Text(itemsList[index]),
-                                ],
+                    Obx(() {
+                      return Column(
+                        children: List.generate(
+                          _addNewBoxViewModel.boxitemList.length,
+                          (index) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
                               ),
-                              Row(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                                left: 5,
+                                right: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  InkWell(
-                                    focusColor: Colors.red,
-                                    highlightColor: Colors.red,
-                                    radius: 10,
-                                    onTap: () {
-                                      print('object');
-                                    },
-                                    child: Text(
-                                      '✏️',
-                                      style: TextStyle(fontSize: 16),
-                                    ).paddingOnly(right: 10, left: 10),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "#${index + 1}",
+                                      ).paddingOnly(right: 10),
+                                      Text(
+                                        _addNewBoxViewModel.boxitemList[index],
+                                      ),
+                                    ],
                                   ),
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        focusColor: Colors.red,
+                                        highlightColor: Colors.red,
+                                        radius: 10,
+                                        onTap: () {
+                                          NotificationUtil.showNotification(
+                                            context,
+                                            "Error",
+                                            "There are some issue here",
+                                            false,
+                                          );
+                                          print(Boxes.getBoxes().length);
+                                        },
+                                        child: Text(
+                                          '✏️',
+                                          style: TextStyle(fontSize: 16),
+                                        ).paddingOnly(right: 10, left: 10),
+                                      ),
 
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.delete_outline_sharp,
-                                      color: Colors.red,
-                                    ),
-                                  ).paddingSymmetric(vertical: 5),
+                                      IconButton(
+                                        onPressed: () {
+                                          _addNewBoxViewModel.delteItemBoxeList(
+                                            index,
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.delete_outline_sharp,
+                                          color: Colors.red,
+                                        ),
+                                      ).paddingSymmetric(vertical: 5),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
                     SizedBox(height: 10),
                     addBoxTextFieldWidget(
                       prefix: '📦',
@@ -205,13 +210,26 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
                       hint: 'Type an item and press add',
                       icon: Icons.text_fields_rounded,
                       suffixIcon: Icons.add,
-                      onSuffixTap: () {},
+                      onSuffixTap: () {
+                        _addNewBoxViewModel.updateItemBoxeList(
+                          itemController.text.toString(),
+                        );
+                        itemController.clear();
+                      },
                     ).paddingOnly(bottom: 10, left: 10, right: 10),
                   ],
                 ),
               ),
               SizedBox(height: 10),
-              _createBoxButton(ontap: () {}).paddingOnly(bottom: 40),
+              _createBoxButton(
+                ontap: () {
+                  _addNewBoxViewModel.fieldsVerification(
+                    context,
+                    boxNameController.text.toString(),
+                    boxLocationController.text.toString(),
+                  );
+                },
+              ).paddingOnly(bottom: 40),
               SizedBox(width: 50),
             ],
           ),
