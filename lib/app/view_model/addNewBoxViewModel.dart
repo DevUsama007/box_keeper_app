@@ -14,6 +14,10 @@ class AddNewBoxViewModel extends GetxController {
     boxitemList.add(boxitem.toString());
   }
 
+  updateItemAtIndex(int ind, String boxitem) {
+    boxitemList[ind] = boxitem;
+  }
+
   updateItemListComplete(List<String> itemList) {
     boxitemList.addAll(itemList);
   }

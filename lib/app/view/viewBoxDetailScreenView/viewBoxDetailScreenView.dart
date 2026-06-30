@@ -6,6 +6,7 @@ import 'package:box_keeper_app/app/res/app_text_styles.dart';
 import 'package:box_keeper_app/app/utils/boxes.dart';
 import 'package:box_keeper_app/app/utils/custome_snackbar_util.dart';
 import 'package:box_keeper_app/app/utils/deleteConfirmationDialogue.dart';
+import 'package:box_keeper_app/app/utils/editItemDialogue.dart';
 import 'package:box_keeper_app/app/view/addNewBoxScreenView/Widgets/addBoxTextFieldWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_action_widget.dart';
 import 'package:box_keeper_app/app/view_model/addNewBoxViewModel.dart';
@@ -211,13 +212,20 @@ class _ViewBoxDetailScreenViewState extends State<ViewBoxDetailScreenView> {
                                         highlightColor: Colors.red,
                                         radius: 10,
                                         onTap: () {
-                                          NotificationUtil.showNotification(
-                                            context,
-                                            "Error",
-                                            "There are some issue here",
-                                            false,
+                                          EditItemDialog.show(
+                                            currentItem: _addNewBoxViewModel
+                                                .boxitemList[index],
+                                            onSave: (updatedItem) {
+                                              print(updatedItem);
+                                              _addNewBoxViewModel
+                                                  .updateItemAtIndex(
+                                                    index,
+                                                    updatedItem,
+                                                  );
+                                              Get.back();
+                                              // _addNewBoxViewModel.updateItem(index, updatedItem);
+                                            },
                                           );
-                                          print(Boxes.getBoxes().length);
                                         },
                                         child: Text(
                                           '✏️',

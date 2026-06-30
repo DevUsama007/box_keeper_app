@@ -2,6 +2,8 @@ import 'package:box_keeper_app/app/model/hive_models/Boxes_model.dart';
 import 'package:box_keeper_app/app/res/app_assets.dart';
 import 'package:box_keeper_app/app/res/app_text_styles.dart';
 import 'package:box_keeper_app/app/utils/boxes.dart';
+import 'package:box_keeper_app/app/utils/custome_snackbar_util.dart';
+import 'package:box_keeper_app/app/utils/deleteConfirmationDialogue.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_action_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/box_widget.dart';
@@ -87,9 +89,27 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                       final item = data[index];
                       int boxNumber = index + 1;
                       return boxWidget(
+                        onlongPress: () {
+                          DeleteConfrimationDialogue.showDeleteConfirmation(
+                            title: "Delete Box",
+                            message:
+                                "Are you sure you want to delete this box?",
+                            onConfirm: () async {
+                              // await Boxes.getBoxes().deleteAt(index);
+                              await data[index].delete();
+
+                              NotificationUtil.showNotification(
+                                Get.context!,
+                                "Deleted",
+                                "Box deleted successfully.",
+                                false,
+                              );
+                            },
+                          );
+                        },
                         ontap: () {
                           print(data[index].boxItems);
-                        
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -107,6 +127,9 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                             : boxNumber.isLowerThan(99)
                             ? '0${boxNumber}'
                             : boxNumber.toString(),
+                        onQrTap: () {},
+                        onEdit: () {},
+                        onDelete: () {},
                       );
                     }),
                   );

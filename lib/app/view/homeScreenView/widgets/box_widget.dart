@@ -10,9 +10,14 @@ Widget boxWidget({
   required BuildContext context,
   required BoxesModel boxModel,
   required String currentBoxNumber,
-  required VoidCallback ontap
+  required VoidCallback ontap,
+  required GestureLongPressCallback onlongPress,
+  required VoidCallback onQrTap,
+  required VoidCallback onEdit,
+  required VoidCallback onDelete,
 }) {
   return InkWell(
+    onLongPress: onlongPress,
     onTap: ontap,
     child: Container(
       width: MediaQuery.of(context).size.width * .45,
@@ -49,39 +54,115 @@ Widget boxWidget({
                   ),
                 ),
                 const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(30),
+                PopupMenuButton<String>(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.qr_code_2, size: 15, color: Colors.white),
-                      const SizedBox(width: 4),
-                      Text(
-                        "QR",
-                        style: AppTextStyles.customText(
-                          color: Colors.white,
-                          fontSize: 11,
-                        ),
+                  color: Colors.white,
+                  elevation: 8,
+                  offset: const Offset(0, 35),
+                  icon: const Icon(
+                    Icons.more_vert,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'qr':
+                        onQrTap();
+                        break;
+                      case 'edit':
+                        onEdit();
+                        break;
+                      case 'delete':
+                        onDelete();
+                        break;
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'qr',
+                      child: _menuItem(
+                        icon: Icons.qr_code_2,
+                        title: "View QR",
+                        iconColor: const Color(0xff5B5CEB),
                       ),
-                    ],
-                  ),
+                    ),
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: _menuItem(
+                        icon: Icons.edit_outlined,
+                        title: "Edit",
+                        iconColor: Colors.orange,
+                      ),
+                    ),
+                    const PopupMenuDivider(height: 8),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: _menuItem(
+                        icon: Icons.delete_outline,
+                        title: "Delete",
+                        iconColor: Colors.red,
+                        textColor: Colors.red,
+                      ),
+                    ),
+                  ],
                 ),
+
+                // InkWell(
+                //   borderRadius: BorderRadius.circular(20),
+                //   onTapDown: (details) async {
+                //     final value = await showMenu(
+                //       context: context,
+                //       position: RelativeRect.fromLTRB(
+                //         details.globalPosition.dx,
+                //         details.globalPosition.dy,
+                //         details.globalPosition.dx,
+                //         0,
+                //       ),
+                //       items: [
+                //         const PopupMenuItem(
+                //           value: 'qr',
+                //           child: Text('View QR'),
+                //         ),
+                //         const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                //         const PopupMenuItem(
+                //           value: 'delete',
+                //           child: Text('Delete'),
+                //         ),
+                //       ],
+                //     );
+
+                //     // Handle selected value...
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.all(6),
+                //     decoration: BoxDecoration(
+                //       color: Colors.white24,
+                //       borderRadius: BorderRadius.circular(20),
+                //     ),
+                //     child: const Icon(
+                //       Icons.more_vert,
+                //       color: Colors.white,
+                //       size: 18,
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
-    
+
           Padding(
             padding: const EdgeInsets.all(15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(child: Image.asset(AppAssets.box, height: 80)),
-    
+
                 const SizedBox(height: 15),
-    
+
                 Text(
                   boxModel.boxTitle,
                   maxLines: 1,
@@ -91,9 +172,9 @@ Widget boxWidget({
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-    
+
                 const SizedBox(height: 10),
-    
+
                 Row(
                   children: [
                     Icon(
@@ -114,9 +195,9 @@ Widget boxWidget({
                     ),
                   ],
                 ),
-    
+
                 const SizedBox(height: 10),
-    
+
                 Row(
                   children: [
                     Container(
@@ -147,9 +228,9 @@ Widget boxWidget({
                         ],
                       ),
                     ),
-    
+
                     const Spacer(),
-    
+
                     InkWell(
                       onTap: () {},
                       borderRadius: BorderRadius.circular(30),
@@ -173,5 +254,35 @@ Widget boxWidget({
         ],
       ),
     ),
+  );
+}
+
+Widget _menuItem({
+  required IconData icon,
+  required String title,
+  required Color iconColor,
+  Color textColor = Colors.black87,
+}) {
+  return Row(
+    children: [
+      Container(
+        height: 32,
+        width: 32,
+        decoration: BoxDecoration(
+          color: iconColor.withOpacity(.12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, size: 18, color: iconColor),
+      ),
+      const SizedBox(width: 12),
+      Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
+      ),
+    ],
   );
 }
