@@ -27,4 +27,18 @@ class BoxesModel extends HiveObject {
     required this.boxItems,
     required this.itemCount,
   });
+  @override
+  String toString() {
+    return '''
+BoxesModel(
+  uniqueID: $uniqueID,
+  qrCodePath: $qrCodePath,
+  boxTitle: $boxTitle,
+  boxLocation: $boxLocation,
+  boxCreationDate: $boxCreationDate,
+  itemCount: $itemCount,
+  boxItems: $boxItems
+)
+''';
+  }
 }

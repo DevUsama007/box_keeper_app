@@ -2,12 +2,12 @@
   import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget statistics() {
+Widget statistics(String totalBoxes,int totalitems) {
     return Row(
       children: [
         Expanded(
           child: statCard(
-            "42",
+            totalBoxes.toString(),
             "Boxes",
             Icons.inventory_2_outlined,
             Colors.deepPurple,

@@ -48,7 +48,15 @@ class _HomeScreenViewState extends State<HomeScreenView> {
               ).paddingSymmetric(horizontal: 10),
               const SizedBox(height: 25),
 
-              statistics().paddingSymmetric(horizontal: 10),
+              InkWell(
+                onTap: () {
+                  _homepageviewmodel.getTotalBoxes();
+                },
+                child: statistics(
+                  _homepageviewmodel.totalBoxes.value.toString(),
+                  0,
+                ).paddingSymmetric(horizontal: 10),
+              ),
 
               const SizedBox(height: 30),
               Row(
