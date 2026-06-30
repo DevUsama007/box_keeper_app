@@ -1,13 +1,19 @@
+import 'package:box_keeper_app/app/model/hive_models/Boxes_model.dart';
 import 'package:box_keeper_app/app/res/app_assets.dart';
 import 'package:box_keeper_app/app/res/app_text_styles.dart';
+import 'package:box_keeper_app/app/utils/boxes.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_action_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/app_bar_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/box_widget.dart';
+import 'package:box_keeper_app/app/view/homeScreenView/widgets/emptyStateWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/floating_action_button_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/greetingWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/statistic_widget.dart';
+import 'package:box_keeper_app/app/view_model/homePageViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class HomeScreenView extends StatefulWidget {
   const HomeScreenView({super.key});
@@ -17,6 +23,7 @@ class HomeScreenView extends StatefulWidget {
 }
 
 class _HomeScreenViewState extends State<HomeScreenView> {
+  Homepageviewmodel _homepageviewmodel = Get.put(Homepageviewmodel());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +43,9 @@ class _HomeScreenViewState extends State<HomeScreenView> {
           padding: EdgeInsets.only(bottom: 50),
           child: Column(
             children: [
-              greetingWidget().paddingSymmetric(horizontal: 10),
+              greetingWidget(
+                _homepageviewmodel.greetingMessage.value.toString(),
+              ).paddingSymmetric(horizontal: 10),
               const SizedBox(height: 25),
 
               statistics().paddingSymmetric(horizontal: 10),
@@ -52,25 +61,41 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                     ),
                   ),
                   const Spacer(),
-                  TextButton(onPressed: () {}, child: const Text("View All")),
+                  // TextButton(onPressed: () {}, child: const Text("View All")),
                 ],
               ).paddingSymmetric(horizontal: 10),
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 2,
-                runAlignment: WrapAlignment.start,
-                runSpacing: 10,
-                children: [
-                  boxWidget(context),
-                  boxWidget(context),
-                  boxWidget(context),
-                  boxWidget(context),
-                  boxWidget(context),
-                  boxWidget(context),
-                  boxWidget(context),
-                ],
+              SizedBox(height: 15),
+              ValueListenableBuilder<Box<BoxesModel>>(
+                valueListenable: Boxes.getBoxes().listenable(),
+                builder: (context, box, child) {
+                  if (box.values.isEmpty) {
+                    return emptyState();
+                  }
+                  var data = box.values
+                      .toList()
+                      .cast<BoxesModel>()
+                      .reversed
+                      .toList();
+                  return Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: List.generate(data.length, (index) {
+                      final item = data[index];
+                      int boxNumber = index + 1;
+                      return boxWidget(
+                        context: context,
+                        boxModel: data[index],
+                        currentBoxNumber: boxNumber.isLowerThan(10)
+                            ? '00${boxNumber}'
+                            : boxNumber.isLowerThan(99)
+                            ? '0${boxNumber}'
+                            : boxNumber.toString(),
+                      );
+                    }),
+                  );
+                },
               ),
+              SizedBox(height: 70),
             ],
           ),
         ),

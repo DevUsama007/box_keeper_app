@@ -152,16 +152,23 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "#${index + 1}",
-                                      ).paddingOnly(right: 10),
-                                      Text(
-                                        _addNewBoxViewModel.boxitemList[index],
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            "#${index + 1}",
+                                          ).paddingOnly(right: 10),
+                                          Text(
+                                            _addNewBoxViewModel
+                                                .boxitemList[index],
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
+
                                   Row(
                                     children: [
                                       InkWell(
