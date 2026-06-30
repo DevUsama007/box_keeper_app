@@ -1,4 +1,5 @@
 import 'package:box_keeper_app/app/custom_widgets/icon_button_widget.dart';
+import 'package:box_keeper_app/app/model/hive_models/Boxes_model.dart';
 import 'package:box_keeper_app/app/res/app_assets.dart';
 import 'package:box_keeper_app/app/res/app_colors.dart';
 import 'package:box_keeper_app/app/res/app_text_styles.dart';
@@ -13,22 +14,55 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/list_notifier.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class AddNewBoxScreenView extends StatefulWidget {
-  const AddNewBoxScreenView({super.key});
+class ViewBoxDetailScreenView extends StatefulWidget {
+  BoxesModel boxModel;
+  int boxIndex;
+  ViewBoxDetailScreenView({
+    super.key,
+    required this.boxModel,
+    required this.boxIndex,
+  });
 
   @override
-  State<AddNewBoxScreenView> createState() => _AddNewBoxScreenViewState();
+  State<ViewBoxDetailScreenView> createState() =>
+      _ViewBoxDetailScreenViewState();
 }
 
-class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
+class _ViewBoxDetailScreenViewState extends State<ViewBoxDetailScreenView> {
   TextEditingController boxNameController = TextEditingController();
   TextEditingController boxLocationController = TextEditingController();
   TextEditingController itemController = TextEditingController();
   AddNewBoxViewModel _addNewBoxViewModel = Get.put(AddNewBoxViewModel());
+  updateValues() {
+    boxNameController.text = widget.boxModel.boxTitle.toString();
+    boxLocationController.text = widget.boxModel.boxLocation.toString();
+    _addNewBoxViewModel.updateItemListComplete(widget.boxModel.boxItems);
+    setState(() {});
+    print(widget.boxModel.boxItems);
+    print(_addNewBoxViewModel.boxitemList.toString());
+  }
+
+  update() {
+    widget.boxModel.boxTitle = boxNameController.text;
+    widget.boxModel.save();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsFlutterBinding.ensureInitialized;
+
+    _addNewBoxViewModel.boxitemList.clear();
+    updateValues();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
     _addNewBoxViewModel.boxitemList.clear();
     boxNameController.dispose();
     boxLocationController.dispose();
@@ -66,7 +100,7 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Add New Box",
+                  "${widget.boxModel.uniqueID}",
                   style: AppTextStyles.customText(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -74,7 +108,7 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Create a storage box and generate a QR code.",
+                  "Added ${widget.boxModel.boxCreationDate}",
                   style: AppTextStyles.customText(
                     color: Colors.grey,
                     fontSize: 14,
@@ -245,11 +279,17 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
               SizedBox(height: 10),
               _createBoxButton(
                 ontap: () {
-                  _addNewBoxViewModel.fieldsVerification(
-                    context: context,
-                    boxName: boxNameController.text.toString(),
-                    physicalLocation: boxLocationController.text.toString(),
-                    isUpdating: false,
+                  // _addNewBoxViewModel.fieldsVerification(
+                  //   context: context,
+                  //   boxName: boxNameController.text.toString(),
+                  //   physicalLocation: boxLocationController.text.toString(),
+                  //   isUpdating: true,
+                  // );
+                  _addNewBoxViewModel.updateBoxDataOnHive(
+                    boxNameController.text,
+                    boxLocationController.text,
+                    widget.boxModel,
+                    context,
                   );
                 },
               ).paddingOnly(bottom: 40),
@@ -352,7 +392,7 @@ class _AddNewBoxScreenViewState extends State<AddNewBoxScreenView> {
             ).paddingOnly(right: 5),
 
             Text(
-              'Create Box & Generate QR',
+              'Update Box',
               style: AppTextStyles.customText(
                 fontSize: 14,
                 color: Colors.white,

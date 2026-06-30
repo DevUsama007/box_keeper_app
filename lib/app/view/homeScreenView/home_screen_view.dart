@@ -9,6 +9,7 @@ import 'package:box_keeper_app/app/view/homeScreenView/widgets/emptyStateWidget.
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/floating_action_button_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/greetingWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/statistic_widget.dart';
+import 'package:box_keeper_app/app/view/viewBoxDetailScreenView/viewBoxDetailScreenView.dart';
 import 'package:box_keeper_app/app/view_model/homePageViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,13 +50,8 @@ class _HomeScreenViewState extends State<HomeScreenView> {
               const SizedBox(height: 25),
 
               InkWell(
-                onTap: () {
-                  _homepageviewmodel.getTotalBoxes();
-                },
-                child: statistics(
-                  _homepageviewmodel.totalBoxes.value.toString(),
-                  0,
-                ).paddingSymmetric(horizontal: 10),
+                onTap: () {},
+                child: statistics().paddingSymmetric(horizontal: 10),
               ),
 
               const SizedBox(height: 30),
@@ -91,6 +87,19 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                       final item = data[index];
                       int boxNumber = index + 1;
                       return boxWidget(
+                        ontap: () {
+                          print(data[index].boxItems);
+                        
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewBoxDetailScreenView(
+                                boxModel: data[index],
+                                boxIndex: index,
+                              ),
+                            ),
+                          );
+                        },
                         context: context,
                         boxModel: data[index],
                         currentBoxNumber: boxNumber.isLowerThan(10)

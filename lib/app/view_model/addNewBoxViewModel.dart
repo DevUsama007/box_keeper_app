@@ -14,6 +14,10 @@ class AddNewBoxViewModel extends GetxController {
     boxitemList.add(boxitem.toString());
   }
 
+  updateItemListComplete(List<String> itemList) {
+    boxitemList.addAll(itemList);
+  }
+
   delteItemBoxeList(int ind) {
     boxitemList.removeAt(ind);
   }
@@ -27,11 +31,12 @@ class AddNewBoxViewModel extends GetxController {
         '${DateTime.now().day}-${DateTime.now().month}-${DateTime.now().year}';
   }
 
-  fieldsVerification(
-    BuildContext context,
-    String boxName,
-    String physicalLocation,
-  ) {
+  fieldsVerification({
+    required BuildContext context,
+    required String boxName,
+    required String physicalLocation,
+    required bool isUpdating,
+  }) {
     if (boxName.isEmpty) {
       NotificationUtil.showNotification(
         context,
@@ -67,23 +72,57 @@ class AddNewBoxViewModel extends GetxController {
     String physicalLocation,
     String qrCodePath,
   ) async {
+    print(boxitemList);
     await getboxUniqueId();
     await getBoxCreationDate();
+    print("Before object:");
+    print(boxitemList);
     final data = BoxesModel(
       uniqueID: uniqueId.value,
       qrCodePath: qrCodePath,
       boxTitle: boxName.toString(),
       boxLocation: physicalLocation.toString(),
       boxCreationDate: boxcreationData.value,
-      boxItems: boxitemList,
+      // boxItems: boxitemList,
+      boxItems: List<String>.from(boxitemList),
       itemCount: boxitemList.length,
     );
     print(
-      "${data.boxCreationDate}-${data.uniqueID}-${data.qrCodePath}-${data.boxItems}-${data.itemCount}",
+      "${data.boxCreationDate}-${boxitemList}-${data.uniqueID}-${data.qrCodePath}-${data.boxItems}-${data.itemCount}",
     );
+    print("After object:");
+    print(data.boxItems);
     final box = Boxes.getBoxes();
-    box.add(data);
+    await box.add(data);
     data.save();
+    print("After add:");
+    print(data.boxItems);
+    print('data is saved successfuly');
+  }
+
+  updateBoxDataOnHive(
+    String boxName,
+    String physicalLocation,
+    BoxesModel boxModel,
+    BuildContext context,
+  ) async {
+    boxModel.boxTitle = boxName;
+    boxModel.boxLocation = physicalLocation;
+    // boxModel.boxItems = boxitemList;
+    boxModel.boxItems = List<String>.from(boxitemList);
+    boxModel.itemCount = boxitemList.length;
+
+    // final box = Boxes.getBoxes();
+    // box.add(data);
+    boxModel.save();
+    NotificationUtil.showNotification(
+      context,
+      "Success",
+      "Data is updated Successfuly",
+      false,
+    );
+    Navigator.pop(context);
+    // data.save();
     print('data is saved successfuly');
   }
 
@@ -91,13 +130,11 @@ class AddNewBoxViewModel extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    boxitemList.clear();
   }
 
   @override
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    boxitemList.clear();
   }
 }

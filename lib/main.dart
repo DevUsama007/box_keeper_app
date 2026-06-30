@@ -1,6 +1,7 @@
 import 'package:box_keeper_app/app/model/hive_models/Boxes_model.dart';
 import 'package:box_keeper_app/app/view/splashScreenView/splash_screen_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'box_keeper_app',
       debugShowCheckedModeBanner: false,
       home: SplashScreenView(),

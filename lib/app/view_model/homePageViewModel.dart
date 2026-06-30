@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 
 class Homepageviewmodel extends GetxController {
-  RxInt totalBoxes = 0.obs;
   RxInt totalItems = 0.obs;
   RxString greetingMessage = ''.obs;
 
@@ -21,9 +20,13 @@ class Homepageviewmodel extends GetxController {
   //     print('----------------------');
   //   }
   // }
-  getTotalBoxes() {
-    final box = Boxes.getBoxes();
-    totalBoxes.value = box.length;
+
+  getTotalItems(int itemCount) {
+    totalItems.value = totalItems.value + itemCount;
+  }
+
+  refreshTotalItem() {
+    totalItems.value = 0;
   }
 
   updateGreetingMessage() {
@@ -32,7 +35,6 @@ class Homepageviewmodel extends GetxController {
 
   startApp() async {
     await updateGreetingMessage();
-    await getTotalBoxes();
   }
 
   @override
