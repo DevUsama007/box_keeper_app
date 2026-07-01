@@ -11,6 +11,7 @@ import 'package:box_keeper_app/app/view/homeScreenView/widgets/emptyStateWidget.
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/floating_action_button_widget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/greetingWidget.dart';
 import 'package:box_keeper_app/app/view/homeScreenView/widgets/statistic_widget.dart';
+import 'package:box_keeper_app/app/view/qrScreens/qrGenerationScreenView.dart';
 import 'package:box_keeper_app/app/view/viewBoxDetailScreenView/viewBoxDetailScreenView.dart';
 import 'package:box_keeper_app/app/view_model/homePageViewModel.dart';
 import 'package:flutter/material.dart';
@@ -89,8 +90,8 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                       final item = data[index];
                       int boxNumber = index + 1;
                       return boxWidget(
-                        onlongPress: () {
-                          DeleteConfrimationDialogue.showDeleteConfirmation(
+                        onlongPress: () async {
+                          await DeleteConfrimationDialogue.showDeleteConfirmation(
                             title: "Delete Box",
                             message:
                                 "Are you sure you want to delete this box?",
@@ -104,6 +105,7 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                                 "Box deleted successfully.",
                                 false,
                               );
+                              Get.back();
                             },
                           );
                         },
@@ -127,9 +129,46 @@ class _HomeScreenViewState extends State<HomeScreenView> {
                             : boxNumber.isLowerThan(99)
                             ? '0${boxNumber}'
                             : boxNumber.toString(),
-                        onQrTap: () {},
-                        onEdit: () {},
-                        onDelete: () {},
+                        onQrTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QrGenerationScreenView(
+                                boxId: data[index].uniqueID,
+                              ),
+                            ),
+                          );
+                        },
+                        onEdit: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ViewBoxDetailScreenView(
+                                boxModel: data[index],
+                                boxIndex: index,
+                              ),
+                            ),
+                          );
+                        },
+                        onDelete: () async {
+                          await DeleteConfrimationDialogue.showDeleteConfirmation(
+                            title: "Delete Box",
+                            message:
+                                "Are you sure you want to delete this box?",
+                            onConfirm: () async {
+                              // await Boxes.getBoxes().deleteAt(index);
+                              await data[index].delete();
+
+                              NotificationUtil.showNotification(
+                                Get.context!,
+                                "Deleted",
+                                "Box deleted successfully.",
+                                false,
+                              );
+                              Get.back();
+                            },
+                          );
+                        },
                       );
                     }),
                   );

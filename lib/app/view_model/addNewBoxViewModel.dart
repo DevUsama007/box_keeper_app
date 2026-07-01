@@ -2,6 +2,7 @@ import 'package:box_keeper_app/app/model/hive_models/Boxes_model.dart';
 import 'package:box_keeper_app/app/utils/boxes.dart';
 import 'package:box_keeper_app/app/utils/custome_snackbar_util.dart';
 import 'package:box_keeper_app/app/utils/uniqueIdGenerator.dart';
+import 'package:box_keeper_app/app/view/qrScreens/qrGenerationScreenView.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -67,6 +68,7 @@ class AddNewBoxViewModel extends GetxController {
         boxName.toString(),
         physicalLocation.toString(),
         'Not Updated Yet',
+        context,
       );
     }
   }
@@ -75,12 +77,10 @@ class AddNewBoxViewModel extends GetxController {
     String boxName,
     String physicalLocation,
     String qrCodePath,
+    BuildContext context,
   ) async {
-    print(boxitemList);
     await getboxUniqueId();
     await getBoxCreationDate();
-    print("Before object:");
-    print(boxitemList);
     final data = BoxesModel(
       uniqueID: uniqueId.value,
       qrCodePath: qrCodePath,
@@ -94,14 +94,22 @@ class AddNewBoxViewModel extends GetxController {
     print(
       "${data.boxCreationDate}-${boxitemList}-${data.uniqueID}-${data.qrCodePath}-${data.boxItems}-${data.itemCount}",
     );
-    print("After object:");
     print(data.boxItems);
-    final box = Boxes.getBoxes();
+    final box = await Boxes.getBoxes();
     await box.add(data);
-    data.save();
-    print("After add:");
-    print(data.boxItems);
-    print('data is saved successfuly');
+    await data.save();
+    NotificationUtil.showNotification(
+      context,
+      "Success",
+      "Data is saved Successfuly",
+      false,
+    );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QrGenerationScreenView(boxId: uniqueId.value),
+      ),
+    );
   }
 
   updateBoxDataOnHive(

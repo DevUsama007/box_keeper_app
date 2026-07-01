@@ -17,8 +17,9 @@ Widget boxWidget({
   required VoidCallback onDelete,
 }) {
   return InkWell(
+    borderRadius: BorderRadius.circular(15),
     onLongPress: onlongPress,
-    onTap: ontap,
+    // onTap: ontap,
     child: Container(
       width: MediaQuery.of(context).size.width * .45,
       decoration: BoxDecoration(
@@ -55,10 +56,17 @@ Widget boxWidget({
                 ),
                 const Spacer(),
                 PopupMenuButton<String>(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.only(top: 3, bottom: 3),
+                    ),
+                    minimumSize: MaterialStateProperty.all(Size.zero),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   color: Colors.white,
                   elevation: 8,
@@ -66,7 +74,7 @@ Widget boxWidget({
                   icon: const Icon(
                     Icons.more_vert,
                     color: Colors.white,
-                    size: 18,
+                    size: 25,
                   ),
                   onSelected: (value) {
                     switch (value) {
@@ -110,46 +118,6 @@ Widget boxWidget({
                     ),
                   ],
                 ),
-
-                // InkWell(
-                //   borderRadius: BorderRadius.circular(20),
-                //   onTapDown: (details) async {
-                //     final value = await showMenu(
-                //       context: context,
-                //       position: RelativeRect.fromLTRB(
-                //         details.globalPosition.dx,
-                //         details.globalPosition.dy,
-                //         details.globalPosition.dx,
-                //         0,
-                //       ),
-                //       items: [
-                //         const PopupMenuItem(
-                //           value: 'qr',
-                //           child: Text('View QR'),
-                //         ),
-                //         const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                //         const PopupMenuItem(
-                //           value: 'delete',
-                //           child: Text('Delete'),
-                //         ),
-                //       ],
-                //     );
-
-                //     // Handle selected value...
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.all(6),
-                //     decoration: BoxDecoration(
-                //       color: Colors.white24,
-                //       borderRadius: BorderRadius.circular(20),
-                //     ),
-                //     child: const Icon(
-                //       Icons.more_vert,
-                //       color: Colors.white,
-                //       size: 18,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -232,7 +200,7 @@ Widget boxWidget({
                     const Spacer(),
 
                     InkWell(
-                      onTap: () {},
+                      onTap: ontap,
                       borderRadius: BorderRadius.circular(30),
                       child: Container(
                         padding: const EdgeInsets.all(8),

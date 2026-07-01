@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DeleteConfrimationDialogue {
-  static void showDeleteConfirmation({
+  static showDeleteConfirmation({
     String title = "Delete Box",
     String message =
         "Are you sure you want to delete? This action cannot be undone.",

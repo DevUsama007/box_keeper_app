@@ -275,6 +275,15 @@ class _ViewBoxDetailScreenViewState extends State<ViewBoxDetailScreenView> {
                       icon: Icons.text_fields_rounded,
                       suffixIcon: Icons.add,
                       onSuffixTap: () {
+                        if (itemController.text.isEmpty) {
+                          NotificationUtil.showNotification(
+                            context,
+                            "Error",
+                            "Please enter an item before adding.",
+                            true,
+                          );
+                          return;
+                        }
                         _addNewBoxViewModel.updateItemBoxeList(
                           itemController.text.toString(),
                         );
